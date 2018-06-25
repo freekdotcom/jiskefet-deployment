@@ -1,0 +1,17 @@
+#!/usr/bin/env ansible-playbook
+- hosts: Jiskerfet-gateways
+  tasks:
+    - name: unarchive backend
+      unarchive:
+        src: ./bin/Backend.tar
+        dest: /home/jiskerfet-api/
+        copy: yes
+        remote_src: yes
+        owner: jiskerfet-api
+    - name: install dependencies of backend
+      remote_user: jiskerfet-api
+      npm: 
+        path: /home/jiskerfet-api/Backend-Bookkeeping
+
+#    - name: start PM2 processes
+#      command: 

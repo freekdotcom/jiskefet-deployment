@@ -1,0 +1,41 @@
+#!/usr/bin/env ansible-playbook
+- hosts: Jiskerfet-gateways
+  tasks:
+    # we don't want to run the jiskerfet API as root
+    # this creates a user without root priviliges
+    - name: Setup user that runs the api
+      user:
+        name: jiskerfet-api
+        state: present
+        shell: /bin/bash
+        home: /home/jiskerfet-api
+    - name: Setup epel release for nginx and nodejs
+      yum: 
+        name: epel-release
+        state: latest
+    - name: install nginx
+      yum:
+        name: nginx
+        state: latest
+    - name: install nodejs
+      yum:
+        name: nodejs
+        state: latest
+      # To daemonize the node application, we use pm2
+    - name: install pm2
+      npm:
+        name: pm2
+        version: latest
+        global: yes
+- hosts: Jiskerfet-repository
+  tasks: 
+    - name: install postgresql-server
+      yum:
+        name: postgresql-server
+        state: latest
+    - name: install postresql-contrib
+      yum:
+        name: postgresql-contrib
+        state: latest
+
+    
