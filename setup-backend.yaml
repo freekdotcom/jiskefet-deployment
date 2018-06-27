@@ -5,13 +5,41 @@
       unarchive:
         src: ./bin/Backend.tar
         dest: /home/jiskerfet-api/
-        copy: yes
-        remote_src: yes
+        remote_src: no
         owner: jiskerfet-api
     - name: install dependencies of backend
       remote_user: jiskerfet-api
       npm: 
         path: /home/jiskerfet-api/Backend-Bookkeeping
-
+    - name: Ensure the PostgreSQL service is running
+      service: name=postgresql state=started enabled=yes    
+    - name: Create new Database
+      postgresql_db: name=prototype login_password=centos
+    - name: Create the user
+      postgresql_user: db=prototype name=softwareforscience login_password=centos priv=ALL 
+    - name: Create the configuration file
+      copy:
+         content: "{
+            'httpConf':{
+               'port' : 8080,
+               'tls' : false
+               'hostname' : 'localhost'
+            },
+            'jwtConf' : {
+               'secret' : 'secret'
+               'expiration' : '5d'
+            },
+            'databaseIP' : 'postgres://softwareforscience:centos@localhost:5432/softwareforscience'
+         } "
+         dest: /home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/config.json
+         force: no
+         group: sys
+         owner: root
+         mode: 0555
+         
+    - name: Test if we can use psql
+      template: src="/home/ubuntu/jiskefet-deployment/bin/databasesetup.sql" dest="databasesetup.sql"
+    - name: Execute the sql script
+      shell: "psql databasesetup.sql"
 #    - name: start PM2 processes
 #      command: 

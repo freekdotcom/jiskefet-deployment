@@ -17,11 +17,23 @@
       yum:
         name: nginx
         state: latest
-    - name: install nodejs
+    - name: Creates the directory
+      file: path=/usr/local/lib/nodejs state=directory
+    - name: Unarchive Nodejs
+      unarchive:
+        src: ./bin/nodejs-v8-11.3-linux-x64.tar.gz
+        dest: /usr/local/lib/nodejs
+        remote_src: no
+        owner: jiskerfet-api
+    - name: Set the enviroment variable
+      shell: echo 'export NODEJS_HOME="/usr/local/lib/nodejs/node-v8.11.3-linux-x64/bin"' >> $HOME/.bashrc
+    - name: Set the Path
+      shell: echo 'PATH="/usr/local/lib/nodejs/node-v8.11.3-linux-x64/bin:$PATH"' >> $HOME/.bashrc
+    - name: install module for database
       yum:
-        name: nodejs
-        state: latest
-      # To daemonize the node application, we use pm2
+       name: python-psycopg2
+       state: latest 
+# To daemonize the node application, we use pm2
     - name: install pm2
       npm:
         name: pm2
