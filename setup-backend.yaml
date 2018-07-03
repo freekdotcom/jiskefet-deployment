@@ -15,9 +15,9 @@
       service: name=postgresql state=started enabled=yes    
     - name: Create new Database
       postgresql_db: name=prototype login_password=centos
-    - name: Create the user
+    - name: Create the user for the database
       postgresql_user: db=prototype name=softwareforscience login_password=centos priv=ALL 
-    - name: Create the configuration file
+    - name: Create the configuration file for the backend server
       copy:
          content: "{
             'httpConf':{
@@ -34,10 +34,9 @@
          dest: /home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/config.json
          force: no
          group: sys
-         owner: root
          mode: 0555
          
-    - name: Test if we can use psql
+    - name: Executing the sql file to create the tables in the database
       template: src="/home/ubuntu/jiskefet-deployment/bin/databasesetup.sql" dest="databasesetup.sql"
     - name: Execute the sql script
       shell: "psql databasesetup.sql"

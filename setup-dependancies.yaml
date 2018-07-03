@@ -17,7 +17,7 @@
       yum:
         name: nginx
         state: latest
-    - name: Creates the directory
+    - name: Creates the directory for nodejs
       file: path=/usr/local/lib/nodejs state=directory
     - name: Unarchive Nodejs
       unarchive:
@@ -25,9 +25,9 @@
         dest: /usr/local/lib/nodejs
         remote_src: no
         owner: jiskerfet-api
-    - name: Set the enviroment variable
+    - name: Set the enviroment variable for nodejs
       shell: echo 'export NODEJS_HOME="/usr/local/lib/nodejs/node-v8.11.3-linux-x64/bin"' >> $HOME/.bashrc
-    - name: Set the Path
+    - name: Set the Path for nodejs
       shell: echo 'PATH="/usr/local/lib/nodejs/node-v8.11.3-linux-x64/bin:$PATH"' >> $HOME/.bashrc
     - name: install module for database
       yum:
