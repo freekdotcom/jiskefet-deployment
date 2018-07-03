@@ -18,6 +18,8 @@ CREATE TABLE file_path (
 file_path VARCHAR(255),
 log_entry_id SERIAL);
 
+CREATE SCHEMA users;
+
 CREATE TABLE users.users (
 id SERIAL PRIMARY KEY,
 name VARCHAR(255),

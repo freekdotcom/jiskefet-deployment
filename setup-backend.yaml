@@ -11,34 +11,44 @@
       remote_user: jiskerfet-api
       npm: 
         path: /home/jiskerfet-api/Backend-Bookkeeping
-    - name: Ensure the PostgreSQL service is running
-      service: name=postgresql state=started enabled=yes    
-    - name: Create new Database
-      postgresql_db: name=prototype login_password=centos
-    - name: Create the user for the database
-      postgresql_user: db=prototype name=softwareforscience login_password=centos priv=ALL 
-    - name: Create the configuration file for the backend server
-      copy:
-         content: "{
-            'httpConf':{
-               'port' : 8080,
-               'tls' : false
-               'hostname' : 'localhost'
-            },
-            'jwtConf' : {
-               'secret' : 'secret'
-               'expiration' : '5d'
-            },
-            'databaseIP' : 'postgres://softwareforscience:centos@localhost:5432/softwareforscience'
-         } "
-         dest: /home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/config.json
-         force: no
-         group: sys
-         mode: 0555
-         
-    - name: Executing the sql file to create the tables in the database
-      template: src="/home/ubuntu/jiskefet-deployment/bin/databasesetup.sql" dest="databasesetup.sql"
-    - name: Execute the sql script
-      shell: "psql databasesetup.sql"
+    - name: Moving the config file to the backend
+      template: src="./bin/config.json" dest="/home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/"
 #    - name: start PM2 processes
 #      command: 
+
+- hosts: Jiskerfet-repository
+  tasks:
+    - name: Ensure the PostgreSQL service is running
+      service: name=postgresql state=started enabled=yes
+    - name: Create the user for the database 
+      become: yes
+      become_user: postgres
+      postgresql_db: name=postgres
+             encoding='UTF-8'
+             lc_collate='en_US.UTF-8'
+             lc_ctype='en_US.UTF-8'
+             template='template0'
+             state=present
+    - name: quick test
+      become: yes
+      become_user: postgres
+      postgresql_user: db=postgres
+             name=postgres
+             password=postgres
+             priv=ALL
+             state=present 
+    - name: Replacing the sql file to create the tables in the database
+      template: src="./bin/databasesetup.sql" dest="/home/databasesetup.sql"
+    - name: Create new schema
+      postgresql_schema:
+         name: users
+    - name: Execute the sql script
+      become: true
+      become_user: postgres
+      command: psql -d postgres -a -f /home/databasesetup.sql
+    - name: Deleting the sql file
+      file:
+         state: absent
+         path: "/home/databasesetup.sql"
+
+

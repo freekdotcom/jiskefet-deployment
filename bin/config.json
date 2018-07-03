@@ -1,0 +1,12 @@
+{
+  "httpConf": {
+    "port" : 8080,
+    "tls" : false,
+    "hostname" : {{hostname}}
+  },
+  "jwtConf": {
+    "secret" : {{secret}},
+    "expiration" : "1d"
+  },
+  "databaseIP" : {{dbname}} + "://" + {{usern}} + ":" + {{pwd}} + "@" + {{ipPort}} + "/" + {{dbname}}
+}
