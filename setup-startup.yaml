@@ -1,0 +1,4 @@
+- hosts: jiskerfet-apiskerfet-gateways
+- tasks: 
+    name: Start the pm2 server
+    shell: pm2 startup

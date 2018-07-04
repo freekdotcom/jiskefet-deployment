@@ -12,10 +12,8 @@
       npm: 
         path: /home/jiskerfet-api/Backend-Bookkeeping
     - name: Moving the config file to the backend
-      template: src="./bin/config.json" dest="/home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/"
-#    - name: start PM2 processes
-#      command: 
-
+      template: src="./bin/config.json" dest="/home/jiskerfet-api/Backend-Bookkeeping/app/configuration_files/" 
+      
 - hosts: Jiskerfet-repository
   tasks:
     - name: Ensure the PostgreSQL service is running
@@ -50,5 +48,6 @@
       file:
          state: absent
          path: "/home/databasesetup.sql"
-
-
+#    - name: start PM2 process
+#      command: 'pm2 start -x -i 4 /home/jiskerfet-api/Backend-Bookkeeping/app/main.js'
+#      ignore_errors: True
