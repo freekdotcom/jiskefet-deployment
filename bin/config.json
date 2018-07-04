@@ -2,11 +2,11 @@
   "httpConf": {
     "port" : 8080,
     "tls" : false,
-    "hostname" : {{hostname}}
+    "hostname" : "{{hostname}}"
   },
   "jwtConf": {
-    "secret" : {{secret}},
+    "secret" : "{{secret}}",
     "expiration" : "1d"
   },
-  "databaseIP" : {{dbname}} + "://" + {{usern}} + ":" + {{pwd}} + "@" + {{ipPort}} + "/" + {{dbname}}
+  "databaseIP" : "{{dbname}}://{{usern}}:{{pwd}}@{{ipPort}}/{{dbname}}"
 }
